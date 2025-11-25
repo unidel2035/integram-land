@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="ru" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ИНТЕГРАМ v3.0 — ИИ Агенты и Автоматизация Будущего</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Custom Config for Tailwind to match 2025 vibes -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                        mono: ['Space Grotesk', 'monospace'],
+                    },
+                    colors: {
+                        brand: {
+                            dark: '#030712',
+                            light: '#f8fafc',
+                            accent: '#6366f1', // Indigo
+                            neon: '#0ea5e9',   // Sky Blue
+                            purple: '#a855f7', // Purple
+                        }
+                    },
+                    backgroundImage: {
+                        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+                        'hero-glow': 'conic-gradient(from 180deg at 50% 50%, #2a2d4a 0deg, #030712 180deg, #2a2d4a 360deg)',
+                    },
+                    animation: {
+                        'blob': 'blob 7s infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom CSS for specific effects -->
+    <style>
+        body {
+            background-color: #030712;
+            color: #f8fafc;
+            overflow-x: hidden;
+        }
+        
+        .glass-panel {
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .glass-card:hover {
+            background: rgba(30, 41, 59, 0.6);
+            border-color: rgba(99, 102, 241, 0.3);
+            transform: translateY(-5px);
+            box-shadow: 0 0 30px rgba(99, 102, 241, 0.15);
+        }
+
+        .text-gradient {
+            background: linear-gradient(to right, #6366f1, #a855f7, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .text-gradient-blue {
+            background: linear-gradient(to right, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(1, 1fr);
+            gap: 1.5rem;
+        }
+        
+        @media (min-width: 768px) {
+            .bento-grid {
+                grid-template-columns: repeat(3, 1fr);
+                grid-template-rows: repeat(2, minmax(250px, auto));
+            }
+            .bento-item-1 { grid-column: span 2; }
+            .bento-item-2 { grid-column: span 1; }
+            .bento-item-3 { grid-column: span 1; }
+            .bento-item-4 { grid-column: span 2; }
+        }
+
+        /* Glowing orb background */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.4;
+            z-index: -1;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-brand-accent selection:text-white">
+
+    <!-- Ambient Background -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none">
+        <div class="orb w-[500px] h-[500px] bg-brand-purple top-[-100px] left-[-100px] animate-blob"></div>
+        <div class="orb w-[400px] h-[400px] bg-brand-neon bottom-[-100px] right-[-100px] animate-blob animation-delay-2000"></div>
+        <div class="orb w-[300px] h-[300px] bg-brand-accent top-[40%] left-[40%] animate-blob animation-delay-4000 opacity-20"></div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="fixed w-full z-50 top-0 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-6 py-4">
+            <div class="glass-panel rounded-full px-6 py-3 flex justify-between items-center">
+                <a href="#" class="flex items-center gap-2 group">
+                    <div class="w-8 h-8 bg-gradient-to-tr from-brand-accent to-brand-purple rounded-lg flex items-center justify-center text-white font-bold shadow-lg group-hover:shadow-brand-accent/50 transition-all">
+                        I
+                    </div>
+                    <span class="font-mono font-bold text-xl tracking-tight">INTEGRAM<span class="text-brand-accent">.AI</span></span>
+                </a>
+                
+                <div class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-300">
+                    <a href="#solutions" class="hover:text-white transition-colors">Решения</a>
+                    <a href="#agents" class="hover:text-white transition-colors">AI Агенты</a>
+                    <a href="#stack" class="hover:text-white transition-colors">Технологии</a>
+                    <a href="#pricing" class="hover:text-white transition-colors">Цены</a>
+                </div>
+
+                <a href="#contact" class="hidden md:block px-5 py-2 bg-white text-black rounded-full font-semibold hover:bg-brand-accent hover:text-white transition-all shadow-lg shadow-white/10 hover:shadow-brand-accent/40 text-sm">
+                    Начать пилот
+                </a>
+
+                <!-- Mobile Menu Button -->
+                <button class="md:hidden text-white" id="mobile-menu-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 9h16.5m-16.5 6.75h16.5" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div class="hidden absolute top-20 left-0 w-full px-6 md:hidden" id="mobile-menu">
+            <div class="glass-panel rounded-2xl p-6 flex flex-col gap-4">
+                <a href="#solutions" class="text-gray-300 hover:text-white">Решения</a>
+                <a href="#agents" class="text-gray-300 hover:text-white">AI Агенты</a>
+                <a href="#stack" class="text-gray-300 hover:text-white">Технологии</a>
+                <a href="#pricing" class="text-gray-300 hover:text-white">Цены</a>
+                <a href="#contact" class="bg-brand-accent text-white py-2 px-4 rounded-lg text-center">Начать пилот</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative min-h-screen flex items-center pt-20">
+        <div class="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-12 items-center">
+            <div class="space-y-8 z-10">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-brand-accent/30 bg-brand-accent/10 text-brand-accent text-xs font-mono uppercase tracking-wider">
+                    <span class="relative flex h-2 w-2">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-accent opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-2 w-2 bg-brand-accent"></span>
+                    </span>
+                    Технология 2025 года
+                </div>
+                
+                <h1 class="text-5xl md:text-7xl font-bold leading-tight">
+                    Автоматизируй <br>
+                    <span class="text-gradient">Нереальное</span>
+                </h1>
+                
+                <p class="text-xl text-gray-400 max-w-lg leading-relaxed">
+                    Ваш бизнес управляется автономными AI-агентами. 
+                    Они планируют, считают, продают и анализируют. 
+                    Без кофе, без выходных, без ошибок.
+                </p>
+                
+                <div class="flex flex-wrap gap-4">
+                    <a href="#contact" class="px-8 py-4 bg-gradient-to-r from-brand-accent to-brand-purple rounded-xl font-bold text-white shadow-lg shadow-brand-accent/25 hover:shadow-brand-accent/40 hover:scale-105 transition-all flex items-center gap-2">
+                        Запустить Агента
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                        </svg>
+                    </a>
+                    <a href="#demo" class="px-8 py-4 glass-card rounded-xl font-bold text-white hover:bg-white/10 transition-all flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z" />
+                        </svg>
+                        Смотреть демо
+                    </a>
+                </div>
+
+                <div class="pt-8 border-t border-white/10 flex gap-8">
+                    <div>
+                        <div class="text-2xl font-bold text-white">500+</div>
+                        <div class="text-sm text-gray-500">Агентов запущено</div>
+                    </div>
+                    <div>
+                        <div class="text-2xl font-bold text-white">24/7</div>
+                        <div class="text-sm text-gray-500">Время работы</div>
+                    </div>
+                    <div>
+                        <div class="text-2xl font-bold text-white">< 0.1%</div>
+                        <div class="text-sm text-gray-500">Уровень ошибок</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Abstract 3D Visualization Placeholder -->
+            <div class="relative h-[500px] w-full flex items-center justify-center animate-float">
+                <div class="absolute inset-0 bg-gradient-to-tr from-brand-accent/20 to-transparent rounded-full blur-3xl"></div>
+                <!-- Using SVG for visual tech feel -->
+                <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" class="w-full h-full drop-shadow-[0_0_30px_rgba(99,102,241,0.5)]">
+                    <path fill="#6366f1" d="M44.7,-76.4C58.9,-69.2,71.8,-59.1,81.6,-46.6C91.4,-34.1,98.1,-19.2,95.8,-5.2C93.5,8.9,82.2,22.1,71.6,33.2C61,44.3,51.1,53.2,40.3,60.4C29.5,67.6,17.8,73.1,4.8,74.7C-8.2,76.3,-22.5,74.1,-36.3,68.6C-50.1,63.1,-63.4,54.3,-73.6,42.3C-83.8,30.3,-90.9,15.1,-91.3,-0.2C-91.7,-15.5,-85.4,-31,-75.3,-43.3C-65.2,-55.6,-51.3,-64.7,-37.3,-71.9C-23.3,-79.1,-9.2,-84.4,2.7,-88.7C14.6,-93,30.5,-96.3,44.7,-76.4Z" transform="translate(100 100) scale(0.8)" opacity="0.8" />
+                </svg>
+                
+                <div class="absolute glass-panel p-4 rounded-xl top-20 right-10 animate-bounce delay-700 shadow-xl border-l-4 border-green-500">
+                    <div class="flex flex-col gap-1">
+                        <div class="flex items-center gap-2">
+                            <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                            <span class="text-xs font-mono font-bold text-green-400">ЗАДАЧА ВЫПОЛНЕНА</span>
+                        </div>
+                        <span class="text-xs text-gray-300">Agent #4: Отчет сформирован (0.4s)</span>
+                    </div>
+                </div>
+
+                <div class="absolute glass-panel p-4 rounded-xl bottom-20 left-0 animate-bounce delay-1000 shadow-xl border-l-4 border-brand-neon">
+                    <div class="flex flex-col gap-1">
+                        <div class="flex items-center gap-2">
+                            <div class="w-2 h-2 bg-brand-neon rounded-full animate-pulse"></div>
+                            <span class="text-xs font-mono font-bold text-brand-neon">ОБРАБОТКА</span>
+                        </div>
+                         <span class="text-xs text-gray-300">Agent #7: Анализ больших данных...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Companies -->
+    <div class="py-10 border-y border-white/5 bg-black/20">
+        <div class="max-w-7xl mx-auto px-6 flex flex-wrap justify-center gap-12 grayscale opacity-70 hover:opacity-100 transition-opacity duration-500">
+           <!-- Simple text placeholders for logos to keep it clean or assume svgs exist -->
+           <span class="text-xl font-bold font-mono">TECHCORP</span>
+           <span class="text-xl font-bold font-mono">NEXUS</span>
+           <span class="text-xl font-bold font-mono">AVANTGARDE</span>
+           <span class="text-xl font-bold font-mono">GLOBAL_AI</span>
+           <span class="text-xl font-bold font-mono">FUTURA</span>
+        </div>
+    </div>
+
+    <!-- Features Bento Grid -->
+    <section class="py-24 relative" id="solutions">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-5xl font-bold mb-4">Экосистема <span class="text-gradient-blue">Интеллекта</span></h2>
+                <p class="text-gray-400 max-w-2xl mx-auto">Мы не просто автоматизируем задачи. Мы создаем цифровых сотрудников, которые усиливают вашу команду.</p>
+            </div>
+
+            <div class="bento-grid">
+                <!-- Item 1: Large Card -->
+                <div class="bento-item-1 glass-card rounded-3xl p-8 relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-64 h-64 bg-brand-accent/10 rounded-full blur-3xl -mr-16 -mt-16 transition-all group-hover:bg-brand-accent/20"></div>
+                    
+                    <div class="relative z-10 h-full flex flex-col justify-between">
+                        <div>
+                            <div class="w-12 h-12 bg-brand-accent/20 rounded-xl flex items-center justify-center mb-6 text-brand-accent">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456ZM16.894 20.567 16.5 21.75l-.394-1.183a2.25 2.25 0 0 0-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 0 0 1.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 0 0 1.423 1.423l1.183.394-1.183.394a2.25 2.25 0 0 0-1.423 1.423Z" />
+                                </svg>
+                            </div>
+                            <h3 class="text-2xl font-bold mb-3">Автономные AI Агенты</h3>
+                            <p class="text-gray-400">Создавайте агентов, способных самостоятельно принимать решения, общаться с клиентами и управлять сложными цепочками задач без участия человека.</p>
+                        </div>
+                        <div class="mt-8">
+                             <div class="flex gap-2 mb-2">
+                                <span class="text-xs bg-white/5 px-2 py-1 rounded border border-white/10">GPT-4o</span>
+                                <span class="text-xs bg-white/5 px-2 py-1 rounded border border-white/10">Claude 3.5</span>
+                                <span class="text-xs bg-white/5 px-2 py-1 rounded border border-white/10">Llama 3</span>
+                             </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Item 2 -->
+                <div class="bento-item-2 glass-card rounded-3xl p-8 group">
+                     <div class="w-12 h-12 bg-brand-purple/20 rounded-xl flex items-center justify-center mb-6 text-brand-purple">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18 9 11.25l4.306 4.306a11.95 11.95 0 0 1 5.814-5.518l2.74-1.22m0 0-5.94-2.281m5.94 2.28-2.28 5.941" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Предиктивная аналитика</h3>
+                    <p class="text-sm text-gray-400">ИИ предсказывает спрос, кассовые разрывы и тренды рынка с точностью до 94%.</p>
+                </div>
+
+                <!-- Item 3 -->
+                <div class="bento-item-3 glass-card rounded-3xl p-8 group">
+                    <div class="w-12 h-12 bg-brand-neon/20 rounded-xl flex items-center justify-center mb-6 text-brand-neon">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Бесшовная интеграция</h3>
+                    <p class="text-sm text-gray-400">Подключается к вашей 1С, CRM, Telegram и почте за 15 минут через API.</p>
+                </div>
+
+                <!-- Item 4: Large Horizontal -->
+                <div class="bento-item-4 glass-card rounded-3xl p-8 flex flex-col md:flex-row items-center gap-8">
+                    <div class="flex-1">
+                        <div class="w-12 h-12 bg-pink-500/20 rounded-xl flex items-center justify-center mb-6 text-pink-500">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043A3.745 3.745 0 0 1 12 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 0 1-3.296-1.043 3.745 3.745 0 0 1-1.043-3.296A3.745 3.745 0 0 1 3 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 0 1 1.043-3.296 3.746 3.746 0 0 1 3.296-1.043A3.746 3.746 0 0 1 12 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.296A3.745 3.745 0 0 1 21 12Z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-3">100% Приватность Данных</h3>
+                        <p class="text-gray-400 mb-4">Локальная установка (On-premise). Ваши данные никогда не покидают периметр компании. LLM работают на ваших серверах.</p>
+                        <a href="#" class="text-brand-accent hover:text-brand-purple transition-colors font-medium inline-flex items-center gap-1">
+                            Узнать технические детали
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                            </svg>
+                        </a>
+                    </div>
+                    <div class="flex-1 w-full bg-black/30 rounded-xl p-6 font-mono text-xs text-green-400 border border-white/5 shadow-inner">
+                        <div class="mb-2 opacity-50">// Server Status: ONLINE</div>
+                        <div class="mb-2 opacity-50">// Encryption: AES-256</div>
+                        <div class="mb-2 opacity-50">// LLM Local Instance: Active</div>
+                        <br>
+                        <div class="typing-effect">
+                            > Incoming request filtered<br>
+                            > Data processed locally<br>
+                            > External access denied<br>
+                            > <span class="animate-pulse">_</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Use Cases Section -->
+    <section class="py-24 bg-black/40" id="agents">
+        <div class="max-w-7xl mx-auto px-6">
+            <h2 class="text-3xl md:text-5xl font-bold mb-16 text-center">Кого заменят <span class="text-gradient">Агенты?</span></h2>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Card 1 -->
+                <div class="glass-card p-1 rounded-2xl bg-gradient-to-b from-white/10 to-transparent">
+                    <div class="bg-[#0f111a] rounded-xl p-6 h-full">
+                        <div class="h-40 bg-gradient-to-br from-brand-accent/20 to-blue-900/20 rounded-lg mb-6 flex items-center justify-center text-brand-accent">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-20 h-20">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">HR Агент</h3>
+                        <p class="text-gray-400 mb-4">Проводит первичное интервью, сканирует резюме, назначает встречи, ведет кадровый учет и график отпусков.</p>
+                        <ul class="space-y-2 text-sm text-gray-300">
+                            <li class="flex items-center gap-2"><span class="text-green-500">✓</span> Скрининг 1000+ резюме/час</li>
+                            <li class="flex items-center gap-2"><span class="text-green-500">✓</span> Авто-онбординг новичков</li>
+                        </ul>
+                    </div>
+                </div>
+
+                 <!-- Card 2 -->
+                 <div class="glass-card p-1 rounded-2xl bg-gradient-to-b from-white/10 to-transparent transform md:-translate-y-4">
+                    <div class="bg-[#0f111a] rounded-xl p-6 h-full border border-brand-accent/50 shadow-[0_0_20px_rgba(99,102,241,0.2)]">
+                         <div class="h-40 bg-gradient-to-br from-brand-purple/20 to-pink-900/20 rounded-lg mb-6 flex items-center justify-center text-brand-purple">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-20 h-20">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">Sales Агент</h3>
+                        <p class="text-gray-400 mb-4">Квалифицирует лиды в чатах, отправляет КП, напоминает о счетах, обновляет CRM после каждого звонка.</p>
+                        <ul class="space-y-2 text-sm text-gray-300">
+                            <li class="flex items-center gap-2"><span class="text-green-500">✓</span> Работает 24/7 без выгорания</li>
+                            <li class="flex items-center gap-2"><span class="text-green-500">✓</span> Моментальный ответ клиенту</li>
+                        </ul>
+                    </div>
+                </div>
+
+                 <!-- Card 3 -->
+                 <div class="glass-card p-1 rounded-2xl bg-gradient-to-b from-white/10 to-transparent">
+                    <div class="bg-[#0f111a] rounded-xl p-6 h-full">
+                         <div class="h-40 bg-gradient-to-br from-brand-neon/20 to-cyan-900/20 rounded-lg mb-6 flex items-center justify-center text-brand-neon">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-20 h-20">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M21 7.5l-9-5.25L3 7.5m18 0l-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9" />
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">Supply Агент</h3>
+                        <p class="text-gray-400 mb-4">Следит за остатками на складе, формирует заказы поставщикам, оптимизирует логистику.</p>
+                         <ul class="space-y-2 text-sm text-gray-300">
+                            <li class="flex items-center gap-2"><span class="text-green-500">✓</span> Снижение стоков на 30%</li>
+                            <li class="flex items-center gap-2"><span class="text-green-500">✓</span> Прогноз дефицита</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA / Contact -->
+    <section class="py-24 relative overflow-hidden" id="contact">
+        <!-- Background Glow -->
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-brand-accent/20 blur-[120px] rounded-full pointer-events-none"></div>
+
+        <div class="max-w-4xl mx-auto px-6 relative z-10 text-center">
+            <h2 class="text-4xl md:text-6xl font-bold mb-6">Готовы к будущему?</h2>
+            <p class="text-xl text-gray-300 mb-12">Оставьте заявку на демонстрацию. Мы покажем, как ИИ-агенты сэкономят вам миллионы уже в первый месяц.</p>
+
+            <form class="glass-card p-8 rounded-3xl max-w-lg mx-auto text-left space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-400 mb-1">Ваше имя</label>
+                    <input type="text" class="w-full bg-black/40 border border-white/20 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-accent transition-colors" placeholder="Алексей Смирнов">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-400 mb-1">Email</label>
+                    <input type="email" class="w-full bg-black/40 border border-white/20 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-accent transition-colors" placeholder="alexey@company.ru">
+                </div>
+                 <div>
+                    <label class="block text-sm font-medium text-gray-400 mb-1">Какую задачу нужно решить?</label>
+                    <select class="w-full bg-black/40 border border-white/20 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-accent transition-colors">
+                        <option>Автоматизация продаж</option>
+                        <option>HR и найм</option>
+                        <option>Склад и логистика</option>
+                        <option>Другое</option>
+                    </select>
+                </div>
+                <button type="submit" class="w-full py-4 bg-gradient-to-r from-brand-accent to-brand-purple rounded-lg font-bold text-white shadow-lg shadow-brand-accent/25 hover:shadow-brand-accent/40 transition-all transform hover:scale-[1.02] mt-4">
+                    Получить стратегию внедрения
+                </button>
+                <p class="text-xs text-center text-gray-500 mt-4">Нажимая кнопку, вы соглашаетесь с политикой обработки данных.</p>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/5 bg-black py-12">
+        <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-4 gap-8 mb-8">
+            <div class="col-span-2">
+                <a href="#" class="font-mono font-bold text-2xl tracking-tight mb-4 block">INTEGRAM<span class="text-brand-accent">.AI</span></a>
+                <p class="text-gray-500 max-w-sm">
+                    Платформа для создания и управления автономными AI-агентами для бизнеса. 
+                    Полная приватность. Локальный деплой.
+                </p>
+            </div>
+            <div>
+                <h4 class="font-bold text-white mb-4">Продукт</h4>
+                <ul class="space-y-2 text-gray-500 text-sm">
+                    <li><a href="#" class="hover:text-brand-accent transition-colors">Функционал</a></li>
+                    <li><a href="#" class="hover:text-brand-accent transition-colors">Безопасность</a></li>
+                    <li><a href="#" class="hover:text-brand-accent transition-colors">Интеграции</a></li>
+                    <li><a href="#" class="hover:text-brand-accent transition-colors">Цены</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-bold text-white mb-4">Компания</h4>
+                <ul class="space-y-2 text-gray-500 text-sm">
+                    <li><a href="#" class="hover:text-brand-accent transition-colors">О нас</a></li>
+                    <li><a href="#" class="hover:text-brand-accent transition-colors">Карьера</a></li>
+                    <li><a href="#" class="hover:text-brand-accent transition-colors">Блог</a></li>
+                    <li><a href="#" class="hover:text-brand-accent transition-colors">Контакты</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-6 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-600">
+            <div>© 2025 INTEGRAM AI. Все права защищены.</div>
+            <div class="flex gap-6">
+                <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
+                <a href="#" class="hover:text-white transition-colors">Terms of Service</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Simple interaction for navbar transparency on scroll
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('py-2');
+                navbar.classList.remove('py-4');
+            } else {
+                navbar.classList.add('py-4');
+                navbar.classList.remove('py-2');
+            }
+        });
+
+        // Mobile menu toggle
+        const mobileBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        mobileBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+    </script>
+</body>
+</html>
